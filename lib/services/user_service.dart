@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:testin/models/user_model.dart';
+import '../models/user_model.dart';
 
 class UserService {
   final Dio dio;
