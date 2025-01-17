@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import '../models/user_model.dart';
-import '../services/user_service.dart';
+import '../services/userServices.dart';
 
 void main() {
   runApp(const MyApp());
