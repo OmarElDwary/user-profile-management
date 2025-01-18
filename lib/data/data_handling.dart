@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-import 'package:users_management/model/UserModel.dart';
+import 'package:users_management/models/user_model.dart';
 import 'package:users_management/services/userServices.dart';
 
 class DataHandling {
