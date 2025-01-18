@@ -48,7 +48,6 @@ class _AddUserState extends State<AddUser> {
           phone: _phoneController.text,
         );
         await userService.createUser(newUser);
-        List<String> users = prefs.getStringList('usersData') ?? [];
         setState(() {
           widget.usersList.add(newUser);
         });
@@ -134,7 +133,14 @@ class _AddUserState extends State<AddUser> {
                     icon: Icons.person_add,
                     backgroundColor: Colors.blue,
                     foregroundColor: Colors.white,
-                    onPressed: createUser,
+                    onPressed: () => createUser(
+                      UserModel(
+                        id: widget.usersList.length + 1,
+                        name: _nameController.text,
+                        email: _emailController.text,
+                        phone: _phoneController.text,
+                      ),
+                    ),
                   ),
                 ],
               ),
