@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:user_profile/views/widgets/custom_confirmation_dialog.dart';
+import '../widgets/custom_confirmation_dialog.dart';
 
 class DeleteButton extends StatefulWidget {
-  const DeleteButton({super.key});
+  final Future<void> Function() onpressesd;
+  const DeleteButton({super.key, required this.onpressesd});
 
   @override
   State<DeleteButton> createState() => _DeleteButtonState();
@@ -31,8 +32,7 @@ class _DeleteButtonState extends State<DeleteButton> {
             action1: AppLocalizations.of(context)!.delete,
             action2: AppLocalizations.of(context)!.cancel,
             onPressed: () {
-              //actions el delete
-              //   _deleteUser(user['id']);
+              widget.onpressesd;
               Navigator.pop(context);
             },
             pressed: () {
@@ -40,9 +40,5 @@ class _DeleteButtonState extends State<DeleteButton> {
             },
           );
         });
-  }
-
-  void _deleteUser(int userId) {
-    print('User $userId deleted');
   }
 }

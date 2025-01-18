@@ -1,9 +1,16 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:user_profile/views/screens/add_user.dart';
-import 'package:user_profile/views/widgets/delete_button.dart';
-import 'package:user_profile/views/screens/edit_user.dart';
-import 'package:user_profile/views/widgets/edit_button.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:users_management/data/data_handling.dart';
+import '../../models/user_model.dart';
+import '../../services/userServices.dart';
+import '../screens/add_user.dart';
+import '../widgets/delete_button.dart';
+import '../screens/edit_user.dart';
+import '../widgets/edit_button.dart';
 
 import 'user_details_page.dart';
 
@@ -17,7 +24,7 @@ class UsersProfile extends StatefulWidget {
 }
 
 class _UsersProfileState extends State<UsersProfile> {
-  Locale _locale = const Locale('en');
+  Locale _locale = Locale('en');
 
   void _changeLanguage(Locale? locale) {
     if (locale != null) {
@@ -28,7 +35,66 @@ class _UsersProfileState extends State<UsersProfile> {
     }
   }
 
-  // List<dynamic> users = [];
+  final UserService userService = UserService(Dio());
+  List<UserModel> usersList = [];
+  List<UserModel> cachedUsers = [];
+  bool isLoading = false;
+  final DataHandling dataHandling = DataHandling(Dio());
+
+  Future<void> fetchCachedUsers() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String usersData = prefs.getString('usersData') ?? '';
+    try {
+      var jsonData = jsonDecode(usersData);
+      jsonData.forEach((el) {
+        usersList.add(UserModel.fromJson(el));
+      });
+    } catch (e) {
+      print(e);
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> fetchUsers() async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      List<UserModel> users = await userService.fetchUsers();
+      setState(() {
+        usersList = users;
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('$e')),
+      );
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> removeUser(int userId) async {
+    try {
+      await dataHandling.deleteUser(userId);
+      setState(() {
+        usersList.removeWhere((user) => user.id == userId);
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchCachedUsers();
+    fetchUsers();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,8 +133,9 @@ class _UsersProfileState extends State<UsersProfile> {
         ],
       ),
       body: ListView.builder(
-        itemCount: 10,
-        itemBuilder: (BuildContext context, int index) {
+        itemCount: usersList.length,
+        itemBuilder: (BuildContext context, index) {
+          final user = usersList[index];
           return Card(
               elevation: 2,
               margin: EdgeInsets.symmetric(
@@ -95,7 +162,7 @@ class _UsersProfileState extends State<UsersProfile> {
                             color: Colors.blue,
                           ),
                         ),
-                        title: Text('User ${index + 1}',
+                        title: Text(user.name,
                             style: TextStyle(
                                 fontSize: widthScreen * 0.05,
                                 fontWeight: FontWeight.bold)),
@@ -109,7 +176,7 @@ class _UsersProfileState extends State<UsersProfile> {
                           children: [
                             EditButton(
                               onPressed: () async {
-                                final result = await Navigator.push(
+                                Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => EditUserPage(),
@@ -118,7 +185,9 @@ class _UsersProfileState extends State<UsersProfile> {
                               },
                             ),
                             SizedBox(width: widthScreen * 0.02),
-                            DeleteButton(),
+                            DeleteButton(
+                              onpressesd: () => removeUser(user.id),
+                            ),
                           ],
                         ),
                       ))));

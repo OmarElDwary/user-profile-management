@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:user_profile/views/screens/user_profile.dart';
+import '../views/screens/user_profile.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

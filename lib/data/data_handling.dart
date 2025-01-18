@@ -8,6 +8,7 @@ class DataHandling {
   List<UserModel> users = [];
   final Dio dio;
   DataHandling(this.dio);
+  final String baseUrl = 'https://jsonplaceholder.typicode.com/users/';
 
   Future<void> getUsers() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -17,10 +18,12 @@ class DataHandling {
     try {
       // Retrieve data from API with the Get requeset
       users = await userService.fetchUsers();
+      var cached = jsonEncode(users);
+      prefs.setString('usersData', cached);
       // Cache the users locally with shared pref
-      final String cachedData =
-          jsonEncode(users.map((user) => user.toJson()).toList());
-      await prefs.setString('usersData', cachedData);
+      // final String cachedData =
+      //     jsonEncode(users.map((user) => user.toJson()).toList());
+      // await prefs.setString('usersData', cachedData);
     } catch (e) {
       //ignore: avoid_print
       print("Failed to fetch Users from the API: $e");
@@ -39,14 +42,12 @@ class DataHandling {
     //we should invoke Post request from the User Service? but won't work because it's a dummy API :(
 
     // unique Id for the new user
-    final int newId = (users.isNotEmpty ? users.last.id + 1 : 1);
+    final int newId = (users.isNotEmpty ? users.length + 1 : 1);
     newUser = UserModel(
         id: newId,
         name: newUser.name,
-        userName: newUser.userName,
         email: newUser.email,
-        phone: newUser.phone,
-        website: newUser.website);
+        phone: newUser.phone);
     // Add the newUser and update cache
     users.add(newUser);
     final String updatedData =

@@ -1,8 +1,12 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:user_profile/views/widgets/custom_button.dart';
-import 'package:user_profile/views/widgets/custom_drop_down_field.dart';
-import 'package:user_profile/views/widgets/custom_text_field.dart';
+import 'package:users_management/data/data_handling.dart';
+import 'package:users_management/models/user_model.dart';
+import 'package:users_management/services/userServices.dart';
+import '../widgets/custom_button.dart';
+import '../widgets/custom_drop_down_field.dart';
+import '../widgets/custom_text_field.dart';
 
 class AddUser extends StatefulWidget {
   const AddUser({super.key});
@@ -16,6 +20,8 @@ class _AddUserState extends State<AddUser> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  List<UserModel> usersList = [];
+  final UserService userService = UserService(Dio());
 
   final List<String> _genderOptions = ['Male', 'Female'];
   String? _selectedGender;
@@ -32,6 +38,28 @@ class _AddUserState extends State<AddUser> {
     super.dispose();
   }
 
+  Future<void> storeUser() async {
+    final newUser = UserModel(
+      id: 0,
+      name: _nameController.toString(),
+      email: _emailController.toString(),
+      phone: _phoneController.toString(),
+    );
+    final DataHandling dataHandling = DataHandling(Dio());
+    await dataHandling.addUser(newUser);
+    _nameController.clear();
+    _emailController.clear();
+    _phoneController.clear();
+
+    try {
+      await dataHandling.addUser(newUser);
+      usersList.add(newUser);
+      print(usersList[10]);
+    } catch (e) {
+      print(e);
+    }
+  }
+
   void _addUser() {
     if (_formKey.currentState!.validate()) {
       print('Name: ${_nameController.text}');
@@ -46,13 +74,28 @@ class _AddUserState extends State<AddUser> {
                 Text(AppLocalizations.of(context)!.user_Added_Successfully)),
       );
 
-      _nameController.clear();
-      _emailController.clear();
-      _phoneController.clear();
+      storeUser();
       setState(() {
         _selectedGender = null;
         _selectedAge = null;
       });
+      Navigator.pop(context);
+    }
+  }
+
+  Future<void> createUser(UserModel user) async {
+    try {
+      await userService.createUser(user);
+      setState(() {
+        usersList.add(user);
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('User created successfully')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('$e')),
+      );
     }
   }
 

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:user_profile/views/widgets/custom_button.dart';
-import 'package:user_profile/views/widgets/custom_drop_down_field.dart';
-import 'package:user_profile/views/widgets/custom_text_field.dart';
+import '../widgets/custom_button.dart';
+import '../widgets/custom_drop_down_field.dart';
+import '../widgets/custom_text_field.dart';
 
 class EditUserPage extends StatefulWidget {
   // final dynamic user;
