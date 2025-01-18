@@ -1,16 +1,17 @@
-# users
+## Users Management App
 
-A new Flutter project.
+# Features
 
-## Getting Started
+# Users List :
+A list that displays all users and gets cached users if there is any.
+It have two buttons for each list item one for delete and the other navigate to edit user form.
+A floating action button that navigates to add user form.
 
-This project is a starting point for a Flutter application.
+# Create User :
+A form that creates new user and store data in cached data using shared preferences.
 
-A few resources to get you started if this is your first Flutter project:
+# Delete User :
+Delete user depending on his ID.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+# Update User :
+Updates User data.

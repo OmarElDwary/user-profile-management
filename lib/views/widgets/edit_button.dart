@@ -7,10 +7,11 @@ class EditButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final widthScreen = MediaQuery.of(context).size.width;
     return IconButton(
-      icon:
-          Icon(Icons.edit, color: Color(0xFFFFC107), size: widthScreen * 0.064),
+      icon: Icon(
+        Icons.edit,
+        color: Color(0xFFFFC107),
+      ),
       onPressed: onPressed,
     );
   }
