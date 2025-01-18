@@ -13,7 +13,6 @@ class UserService {
         List<dynamic> users = response.data;
         List<UserModel> userList =
             users.map((user) => UserModel.fromJson(user)).toList();
-        print(userList[0]);
         return userList;
       } else {
         throw Exception('Failed to fetch employees: ${response.statusMessage}');
