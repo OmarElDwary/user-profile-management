@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import '../../models/user_model.dart';
-import '../widgets/custom_button.dart';
-import '../widgets/custom_text_field.dart';
+import 'package:users_management/models/user_model.dart';
+import 'package:users_management/views/widgets/custom_button.dart';
+import 'package:users_management/views/widgets/custom_text_field.dart';
 
 class AddUser extends StatefulWidget {
   final Function(UserModel)? onUserAdded;

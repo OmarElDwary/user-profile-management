@@ -1,8 +1,7 @@
 import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../models/user_model.dart';
+import 'package:users_management/models/user_model.dart';
 
 class UserService {
   final Dio dio;

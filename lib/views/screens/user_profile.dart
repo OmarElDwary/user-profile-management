@@ -1,12 +1,11 @@
 import 'dart:developer';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import '../../models/user_model.dart';
-import '../../services/user_service.dart';
-import '../screens/add_user.dart';
-import '../widgets/user_card.dart';
+import 'package:users_management/models/user_model.dart';
+import 'package:users_management/services/user_service.dart';
+import 'package:users_management/views/screens/add_user.dart';
+import 'package:users_management/views/widgets/user_card.dart';
 
 class UsersProfile extends StatefulWidget {
   final Function(Locale) changeLanguage;

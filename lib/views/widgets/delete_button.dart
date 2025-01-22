@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import '../widgets/custom_confirmation_dialog.dart';
+import 'package:users_management/views/widgets/custom_confirmation_dialog.dart';
 
 class DeleteButton extends StatefulWidget {
   const DeleteButton({super.key, required this.onPressed});

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:users_management/models/user_model.dart';
-import '../widgets/custom_button.dart';
-import '../widgets/custom_drop_down_field.dart';
-import '../widgets/custom_text_field.dart';
+import 'package:users_management/views/widgets/custom_button.dart';
+import 'package:users_management/views/widgets/custom_text_field.dart';
 
 class EditUserPage extends StatefulWidget {
   UserModel user;
@@ -27,8 +26,6 @@ class _EditUserPageState extends State<EditUserPage> {
     _nameController = TextEditingController(text: widget.user.name);
     _emailController = TextEditingController(text: widget.user.email);
     _phoneController = TextEditingController(text: widget.user.phone);
-    // _selectedGender = widget.user['gender'];
-    // _selectedAge = widget.user['age'];
   }
 
   @override

@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:users_management/models/user_model.dart';
-import 'package:users_management/services/user_service.dart';
 
 class DataHandling {
   List<UserModel> users = [];

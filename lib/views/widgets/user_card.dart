@@ -1,11 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import '../../models/user_model.dart';
-import '../../services/user_service.dart';
-import '../screens/edit_user.dart';
-import '../screens/user_details_page.dart';
-import 'delete_button.dart';
-import 'edit_button.dart';
+import 'package:users_management/models/user_model.dart';
+import 'package:users_management/services/user_service.dart';
+import 'package:users_management/views/screens/edit_user.dart';
+import 'package:users_management/views/screens/user_details_page.dart';
+import 'package:users_management/views/widgets/delete_button.dart';
+import 'package:users_management/views/widgets/edit_button.dart';
 
 class UserCard extends StatefulWidget {
   const UserCard({
