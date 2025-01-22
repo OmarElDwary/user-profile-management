@@ -102,6 +102,11 @@ class _UsersProfileState extends State<UsersProfile> {
           return UserCard(
             userModel: user,
             usersList: usersList,
+            onUserDelete: () {
+              setState(() {
+                usersList.removeAt(index);
+              });
+            },
           );
         },
       ),

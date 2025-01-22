@@ -33,10 +33,10 @@ class _DeleteButtonState extends State<DeleteButton> {
           action1: AppLocalizations.of(context)!.delete,
           action2: AppLocalizations.of(context)!.cancel,
           onPressed: () {
+            widget.onpressesd();
             Navigator.pop(context);
           },
           pressed: () {
-            widget.onpressesd;
             Navigator.pop(context, false);
           },
         );

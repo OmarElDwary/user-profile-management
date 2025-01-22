@@ -13,10 +13,12 @@ class UserCard extends StatefulWidget {
     super.key,
     required this.userModel,
     required this.usersList,
+    required this.onUserDelete,
   });
 
   final UserModel userModel;
   final List<UserModel> usersList;
+  final VoidCallback onUserDelete;
 
   @override
   State<UserCard> createState() => _UserCardState();
@@ -25,7 +27,7 @@ class UserCard extends StatefulWidget {
 class _UserCardState extends State<UserCard> {
   @override
   void initState() {
-    print(widget.usersList);
+    // print(widget.usersList[4]);
     super.initState();
   }
 
@@ -33,10 +35,8 @@ class _UserCardState extends State<UserCard> {
 
   Future<void> deleteUser(int userId) async {
     try {
-      print(userId);
-      print("deleted");
       await userService.deleteUser(userId);
-      print(userId);
+      widget.onUserDelete();
       setState(() {
         widget.usersList.removeWhere((user) => user.id == userId);
       });
@@ -59,7 +59,9 @@ class _UserCardState extends State<UserCard> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => UserDetailsPage(),
+              builder: (context) => UserDetailsPage(
+                user: widget.userModel,
+              ),
             ),
           );
         },
