@@ -3,9 +3,9 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../widgets/custom_confirmation_dialog.dart';
 
 class DeleteButton extends StatefulWidget {
-  const DeleteButton({super.key, required this.onpressesd});
+  const DeleteButton({super.key, required this.onPressed});
 
-  final VoidCallback onpressesd;
+  final VoidCallback onPressed;
 
   @override
   State<DeleteButton> createState() => _DeleteButtonState();
@@ -33,7 +33,7 @@ class _DeleteButtonState extends State<DeleteButton> {
           action1: AppLocalizations.of(context)!.delete,
           action2: AppLocalizations.of(context)!.cancel,
           onPressed: () {
-            widget.onpressesd();
+            widget.onPressed();
             Navigator.pop(context);
           },
           pressed: () {

@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import '../../models/user_model.dart';
@@ -12,40 +11,31 @@ class UserCard extends StatefulWidget {
   const UserCard({
     super.key,
     required this.userModel,
-    required this.usersList,
     required this.onUserDelete,
+    required this.onUserUpdated,
   });
 
   final UserModel userModel;
-  final List<UserModel> usersList;
   final VoidCallback onUserDelete;
+  final Function(UserModel) onUserUpdated;
 
   @override
   State<UserCard> createState() => _UserCardState();
 }
 
 class _UserCardState extends State<UserCard> {
-  @override
-  void initState() {
-    // print(widget.usersList[4]);
-    super.initState();
-  }
-
   final UserService userService = UserService(Dio());
 
   Future<void> deleteUser(int userId) async {
     try {
       await userService.deleteUser(userId);
       widget.onUserDelete();
-      setState(() {
-        widget.usersList.removeWhere((user) => user.id == userId);
-      });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('User deleted successfully')),
+        const SnackBar(content: Text('User deleted successfully')),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('$e')),
+        SnackBar(content: Text('Failed to delete user: $e')),
       );
     }
   }
@@ -76,7 +66,7 @@ class _UserCardState extends State<UserCard> {
             ),
             title: Text(
               widget.userModel.name,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
@@ -93,19 +83,23 @@ class _UserCardState extends State<UserCard> {
               children: [
                 EditButton(
                   onPressed: () async {
-                    Navigator.push(
+                    final updatedUser = await Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => EditUserPage(
-                            // user: widget.user,
-                            ),
+                          user: widget.userModel,
+                        ),
                       ),
                     );
+
+                    if (updatedUser != null) {
+                      widget.onUserUpdated(updatedUser);
+                    }
                   },
                 ),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 DeleteButton(
-                  onpressesd: () => deleteUser(widget.userModel.id),
+                  onPressed: () => deleteUser(widget.userModel.id),
                 ),
               ],
             ),

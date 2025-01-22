@@ -1,10 +1,12 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:users_management/views/widgets/user_card.dart';
 import '../../models/user_model.dart';
 import '../../services/user_service.dart';
 import '../screens/add_user.dart';
+import '../widgets/user_card.dart';
 
 class UsersProfile extends StatefulWidget {
   final Function(Locale) changeLanguage;
@@ -19,7 +21,7 @@ class UsersProfile extends StatefulWidget {
 }
 
 class _UsersProfileState extends State<UsersProfile> {
-  Locale _locale = Locale('en');
+  Locale _locale = const Locale('en');
 
   void _changeLanguage(Locale? locale) {
     if (locale != null) {
@@ -39,19 +41,46 @@ class _UsersProfileState extends State<UsersProfile> {
       isLoading = true;
     });
     try {
-      List<UserModel> users = await userService.loadCachedUsers();
+      final List<UserModel> users = await userService.loadCachedUsers();
       setState(() {
         usersList = users;
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('$e')),
+        SnackBar(content: Text('Failed to load users: $e')),
       );
     } finally {
       setState(() {
         isLoading = false;
       });
     }
+  }
+
+  Future<void> _addUser(UserModel newUser) async {
+    setState(() {
+      usersList.add(newUser);
+    });
+    await userService.cacheUsers(usersList);
+    log('User added: ${newUser.name}');
+  }
+
+  Future<void> _updateUser(UserModel updatedUser) async {
+    setState(() {
+      final index = usersList.indexWhere((user) => user.id == updatedUser.id);
+      if (index != -1) {
+        usersList[index] = updatedUser;
+      }
+    });
+    await userService.cacheUsers(usersList);
+    log('User updated: ${updatedUser.name}');
+  }
+
+  Future<void> _deleteUser(int userId) async {
+    setState(() {
+      usersList.removeWhere((user) => user.id == userId);
+    });
+    await userService.cacheUsers(usersList);
+    log('User deleted: $userId');
   }
 
   @override
@@ -70,9 +99,10 @@ class _UsersProfileState extends State<UsersProfile> {
         title: Text(
           appLocalizations.usersApp,
           style: TextStyle(
-              fontSize: widthScreen * 0.05,
-              fontWeight: FontWeight.bold,
-              color: Colors.white),
+            fontSize: widthScreen * 0.05,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
         ),
         backgroundColor: Colors.blue,
         elevation: 4,
@@ -83,11 +113,11 @@ class _UsersProfileState extends State<UsersProfile> {
             onChanged: _changeLanguage,
             items: [
               DropdownMenuItem(
-                value: Locale('en'),
+                value: const Locale('en'),
                 child: Text(appLocalizations.english),
               ),
               DropdownMenuItem(
-                value: Locale('ar'),
+                value: const Locale('ar'),
                 child: Text(appLocalizations.arabic),
               ),
             ],
@@ -95,37 +125,40 @@ class _UsersProfileState extends State<UsersProfile> {
           ),
         ],
       ),
-      body: ListView.builder(
-        itemCount: usersList.length,
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : ListView.builder(
+              itemCount: usersList.length,
         itemBuilder: (context, index) {
           final user = usersList[index];
           return UserCard(
             userModel: user,
-            usersList: usersList,
-            onUserDelete: () {
-              setState(() {
-                usersList.removeAt(index);
-              });
-            },
-          );
+                  onUserDelete: () => _deleteUser(user.id),
+                  onUserUpdated: _updateUser,
+                );
         },
       ),
       floatingActionButton: FloatingActionButton(
         elevation: 4,
-        onPressed: () {
-          Navigator.push(
+        onPressed: () async {
+          final newUser = await Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => AddUser(
                 usersList: usersList,
+                onUserAdded: _addUser,
               ),
             ),
           );
+
+          if (newUser != null) {
+            await _addUser(newUser);
+          }
         },
         backgroundColor: Colors.blue,
         splashColor: Colors.blue[200],
-        shape: CircleBorder(),
-        child: Icon(
+        shape: const CircleBorder(),
+        child: const Icon(
           Icons.add,
           color: Colors.white,
         ),

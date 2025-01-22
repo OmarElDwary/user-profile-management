@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:users_management/models/user_model.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/custom_drop_down_field.dart';
 import '../widgets/custom_text_field.dart';
 
 class EditUserPage extends StatefulWidget {
-  // final dynamic user;
+  UserModel user;
+  final Function(UserModel)? onUserUpdated;
 
-  const EditUserPage({super.key});
+  EditUserPage({super.key, required this.user, this.onUserUpdated});
 
   @override
   State<EditUserPage> createState() => _EditUserPageState();
@@ -18,22 +20,13 @@ class _EditUserPageState extends State<EditUserPage> {
   late TextEditingController _emailController;
   late TextEditingController _phoneController;
 
-  final List<String> _genderOptions = ['Male', 'Female'];
-  String? _selectedGender;
-
-  final List<String> _ageOptions =
-      List.generate(83, (index) => (index + 18).toString());
-  String? _selectedAge;
-
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController();
-    _emailController = TextEditingController();
-    _phoneController = TextEditingController();
-    // _nameController = TextEditingController(text: "widget.user['name']");
-    // _emailController = TextEditingController(text: "widget.user['email']");
-    // _phoneController = TextEditingController(text: "widget.user['phone']");
+
+    _nameController = TextEditingController(text: widget.user.name);
+    _emailController = TextEditingController(text: widget.user.email);
+    _phoneController = TextEditingController(text: widget.user.phone);
     // _selectedGender = widget.user['gender'];
     // _selectedAge = widget.user['age'];
   }
@@ -58,25 +51,19 @@ class _EditUserPageState extends State<EditUserPage> {
       return;
     }
 
-    final updatedUser = {
-      'name': _nameController.text,
-      'email': _emailController.text,
-      'phone': _phoneController.text,
-      'gender': _selectedGender,
-      'age': _selectedAge,
-    };
-
-    print('Updated User: $updatedUser');
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-          content:
-              Text(AppLocalizations.of(context)!.user_updated_successfully)),
+    final updatedUser = UserModel(
+      id: widget.user.id,
+      name: _nameController.text,
+      email: _emailController.text,
+      phone: _phoneController.text,
     );
 
-    // api hyb2a hena
-  }
+    if (widget.onUserUpdated != null) {
+      widget.onUserUpdated!(updatedUser);
+    }
 
+    Navigator.pop(context, updatedUser);
+  }
   @override
   Widget build(BuildContext context) {
     final appLocalizations = AppLocalizations.of(context)!;
@@ -133,40 +120,6 @@ class _EditUserPageState extends State<EditUserPage> {
                 return null;
               },
               keyboardType: TextInputType.phone,
-            ),
-            SizedBox(height: heightScreen * 0.02),
-            CustomDropdownField(
-              labelText: appLocalizations.gender,
-              value: _selectedGender,
-              items: _genderOptions,
-              onChanged: (value) {
-                setState(() {
-                  _selectedGender = value;
-                });
-              },
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return appLocalizations.please_select_a_gender;
-                }
-                return null;
-              },
-            ),
-            SizedBox(height: heightScreen * 0.02),
-            CustomDropdownField(
-              labelText: 'Age',
-              value: _selectedAge,
-              items: _ageOptions,
-              onChanged: (value) {
-                setState(() {
-                  _selectedAge = value;
-                });
-              },
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return appLocalizations.please_select_an_age;
-                }
-                return null;
-              },
             ),
             SizedBox(height: heightScreen * 0.03),
             CustomButton(

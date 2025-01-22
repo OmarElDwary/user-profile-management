@@ -16,7 +16,7 @@ class DataHandling {
     //we should invoke Post request from the User Service? but won't work because it's a dummy API :(
 
     // unique Id for the new user
-    final int newId = (users.isNotEmpty ? users.length + 1 : 1);
+    final int newId = (users.isNotEmpty ? users.last.id + 1 : 1);
     newUser = UserModel(
         id: newId,
         name: newUser.name,
@@ -26,7 +26,7 @@ class DataHandling {
     users.add(newUser);
     final String updatedData =
         jsonEncode(users.map((e) => e.toJson()).toList());
-    prefs.setString('usersData', updatedData);
+    await prefs.setString('usersData', updatedData);
   }
 
   Future<void> updateUser(UserModel updatedUser) async {
@@ -56,5 +56,15 @@ class DataHandling {
     final String updatedData =
         jsonEncode(users.map((user) => user.toJson()).toList());
     prefs.setString('usersData', updatedData);
+  }
+
+  Future<List<UserModel>> loadCachedUsers() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? cachedData = prefs.getString('usersData');
+    if (cachedData != null) {
+      final List<dynamic> jsonData = jsonDecode(cachedData);
+      return jsonData.map((user) => UserModel.fromJson(user)).toList();
+    }
+    return [];
   }
 }
